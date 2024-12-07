@@ -5,20 +5,34 @@
 
 using namespace std;
 
-struct Node {
-    int data;
-    Node *next;
+struct data {
+    string nama;
+    string Ttl;
+    int umur;
+};
+
+struct Teman {
+    string nama;
+    Teman* nextEdge;
+};
+
+struct Pengguna {
+    data info;
+    nextPengguna* nextVertex;
+    nextTeman* nextEdge;
 };
 
 struct Graf {
-    Node *first[100];
-    int jumlahNode;
+    Pengguna* first;
 };
 
+void buatPengguna(adr*& nextVertex, string nama, string Ttl, int umur);
 void inisialisasiGraf(Graf &G);
-void tambahHubungan(Graf &G, int pengguna1, int pengguna2);
-void tampilkanGraf(Graf G, int pengguna = -1);
-void cariKomunitas(Graf &G, bool *dikunjungi);
-void eksplorasiKomunitas(Graf &G, int pengguna, bool *dikunjungi, string &komunitas);
+void tambahPengguna(Graf &G, string nama, string Ttl, int umur);
+void tambahHubungan(Graf &G, string pengguna1, string pengguna2);
+Pengguna searchPengguna(Graf G, string nama);
+void tampilkanGraf(Graf G);
+void cariTerpopuler(Graf G);
+void cariTidakTerpopuler(Graf G);
 
 #endif // GRAPH_H
