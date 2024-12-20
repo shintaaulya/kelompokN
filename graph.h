@@ -17,17 +17,17 @@ struct Teman {
 };
 
 struct Pengguna {
-    data info;
-    nextPengguna* nextVertex;
-    nextTeman* nextEdge;
+     data info;
+    Pengguna* nextVertex;
+    Teman* nextEdge;
 };
 
 struct Graf {
     Pengguna* first;
 };
 
-void buatPengguna(adr*& nextVertex, string nama, string Ttl, int umur);
-void inisialisasiGraf(Graf &G);
+void buatPengguna(Pengguna*& nextVertex, string nama, string Ttl, int umur);
+void inisialisasiGraf(Graf& G);
 void tambahPengguna(Graf &G, string nama, string Ttl, int umur);
 void tambahHubungan(Graf &G, string pengguna1, string pengguna2);
 Pengguna searchPengguna(Graf G, string nama);
