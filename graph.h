@@ -1,38 +1,40 @@
-#ifndef GRAPH_H
-#define GRAPH_H
-
+#ifndef GRAPH_H_INCLUDED
+#define GRAPH_H_INCLUDED
 #include <iostream>
-
+#include <string>
 using namespace std;
 
-struct data {
-    string nama;
-    string Ttl;
-    int umur;
+typedef struct Pengguna *adrPengguna;
+typedef struct Teman *adrTeman;
+
+struct Pengguna {
+    string name;
+    string birthDate;
+    int age;
+    adrPengguna nextPengguna;
+    adrTeman firstTeman;
 };
 
 struct Teman {
-    string nama;
-    Teman* nextEdge;
+    adrPengguna destPengguna;
+    adrTeman nextTeman;
 };
 
-struct Pengguna {
-     data info;
-    Pengguna* nextVertex;
-    Teman* nextEdge;
+struct graph {
+    adrPengguna firstPengguna;
 };
 
-struct Graf {
-    Pengguna* first;
-};
+void createPengguna(string name, string birthDate, int age, adrPengguna &v);
+void initGraph(graph &G);
+void addPengguna(graph &G, string name, string birthDate, int age);
+void createTeman(adrPengguna &v1, adrPengguna &v2);
+void addTeman(graph &G, string name1, string name2);
+adrPengguna findPengguna(graph G, string name);
+bool isPenggunaExist(graph G, string name);
+void showMenu();
+void showAllUsers(graph G);
+void showUserConnections(graph G, string name);
+void showMostPopular(graph G);
 
-void buatPengguna(Pengguna*& nextVertex, string nama, string Ttl, int umur);
-void inisialisasiGraf(Graf& G);
-void tambahPengguna(Graf &G, string nama, string Ttl, int umur);
-void tambahHubungan(Graf &G, string pengguna1, string pengguna2);
-Pengguna searchPengguna(Graf G, string nama);
-void tampilkanGraf(Graf G);
-void cariTerpopuler(Graf G);
-void cariTidakTerpopuler(Graf G);
 
-#endif // GRAPH_H
+#endif // GRAPH_H_INCLUDED
