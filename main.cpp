@@ -1,26 +1,51 @@
-#include <iostream>
+#include "graph.h"
 
-using namespace std;
+int main() {
+    graph G;
+    initGraph(G);
+    int choice;
+    string name, birthDate, name2;
+    int age;
 
-   int main() {
-    Graf G;
-    inisialisasiGraf(G);
+    do {
+        showMenu();
+        cout << "Masukan pilihan: ";
+        cin >> choice;
+        cin.ignore();
 
-    tambahPengguna(G, "Alice", "01/01/2000", 23);
-    tambahPengguna(G, "Bob", "02/02/1999", 24);
-    tambahPengguna(G, "Charlie", "03/03/1998", 25);
+        switch (choice) {
+            case 1:
+                cout << "Masukkan nama: ";
+                getline(cin, name);
+                cout << "Masukkan TTL (dd/mm/yyyy): ";
+                getline(cin, birthDate);
+                cout << "Masukkan umur: ";
+                cin >> age;
+                addPengguna(G, name, birthDate, age);
+                break;
 
-    tambahHubungan(G, "Alice", "Bob");
-    tambahHubungan(G, "Alice", "Charlie");
-    tambahHubungan(G, "Bob", "Charlie");
+            case 2:
+                cout << "Masukkan nama pengguna pertama: ";
+                getline(cin, name);
+                cout << "Masukkan nama pengguna kedua: ";
+                getline(cin, name2);
+                if (isPenggunaExist(G, name) && isPenggunaExist(G, name2)) {
+                    addTeman(G, name, name2);
+                    cout << "Hubungan berhasil ditambahkan." << endl;
+                } else {
+                    cout << "Salah satu atau kedua pengguna tidak ditemukan." << endl;
+                }
+                break;
 
-    cout << "Graf pengguna:\n";
-    tampilkanGraf(G);
+            case 3:
+                showAllUsers(G);
+                break;
 
-    cariTerpopuler(G);
-    cariTidakTerpopuler(G);
+            case 4:
+                showMostPopular(G);
+                break;
+        }
+    } while (choice != 5);
 
     return 0;
 }
-
-
