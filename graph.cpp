@@ -1,104 +1,123 @@
 #include "graph.h"
 
-void buatPengguna(Pengguna*& nextVertex, string nama, string Ttl, int umur) {
-    nextVertex = new Pengguna;
-    nextVertex->info.nama = nama;
-    nextVertex->info.Ttl = Ttl;
-    nextVertex->info.umur = umur;
-    nextVertex->nextEdge = nullptr;
-    nextVertex->nextVertex = nullptr;
+void createPengguna(string name, string birthDate, int age, adrPengguna &v) {
+    v = new Pengguna;
+    v->name = name;
+    v->birthDate = birthDate;
+    v->age = age;
+    v->firstTeman = NULL;
+    v->nextPengguna = NULL;
 }
 
-void inisialisasiGraf(Graf &G) {
-   G.first = nullptr;
+void initGraph(graph &G) {
+    G.firstPengguna= NULL;
 }
 
-Pengguna searchPengguna(Graf G, string nama){
-    Pengguna temp = G.first;
-    if (temp == nullptr) {
-        return nullptr
-    }else{
-        while (temp!= nullptr){
-            if (temp -> info.nama == nama){
-                return temp;
-            }
-            temp = temp -> nextPengguna;
-        }
-        return nullptr;
-    }
-}
-
-
-void tambahHubungan(Graf& G, string pengguna1, string pengguna2) {
-    Pengguna* p1 = searchPengguna(G, pengguna1);
-    Pengguna* p2 = searchPengguna(G, pengguna2);
-
-    if (p1 != nullptr && p2 != nullptr) {
-        Teman* temanBaru = new Teman;
-        temanBaru->nama = pengguna2;
-        temanBaru->nextEdge = p1->nextEdge;
-        p1->nextEdge = temanBaru;
+void addPengguna(graph &G, string name, string birthDate, int age) {
+    adrPengguna v;
+    createPengguna(name, birthDate, age, v);
+    if (G.firstPengguna == NULL) {
+        G.firstPengguna = v;
     } else {
-        cout << "Salah satu atau kedua pengguna tidak ditemukan.\n";
+        adrPengguna lastV = G.firstPengguna;
+        while (lastV->nextPengguna != NULL) {
+            lastV = lastV->nextPengguna;
+        }
+        lastV->nextPengguna = v;
     }
 }
 
-void tampilkanGraf(Graf G) {
-    Pengguna* temp = G.first;
-    while (temp != nullptr) {
-        cout << "Nama: " << temp->info.nama << ", Ttl: " << temp->info.Ttl << ", Umur: " << temp->info.umur << endl;
-        Teman* edge = temp->nextEdge;
-        cout << "Teman: ";
-        while (edge != nullptr) {
-            cout << edge->nama << " ";
-            edge = edge->nextEdge;
+void createTeman(adrPengguna &v1, adrPengguna &v2) {
+    adrTeman newTeman = new Teman;
+    newTeman -> destPengguna = v2;
+    newTeman -> nextTeman = NULL;
+
+    if (v1->firstTeman == NULL) {
+        v1->firstTeman = newTeman;
+    } else {
+        adrTeman lastTeman = v1->firstTeman;
+        while (lastTeman->nextTeman != NULL) {
+            lastTeman = lastTeman->nextTeman;
+        }
+        lastTeman->nextTeman = newTeman;
+    }
+}
+
+void addTeman(graph &G, string name1, string name2) {
+    adrPengguna v1 = findPengguna(G, name1);
+    adrPengguna v2 = findPengguna(G, name2);
+
+    if (v1 != NULL && v2 != NULL) {
+        createTeman(v1, v2);
+        createTeman(v2, v1);
+    }
+}
+
+adrPengguna findPengguna(graph G, string name) {
+    adrPengguna curr = G.firstPengguna;
+    while (curr != NULL) {
+        if (curr->name == name) {
+            return curr;
+        }
+        curr = curr->nextPengguna;
+    }
+    return NULL;
+}
+
+bool isPenggunaExist(graph G, string name) {
+    return findPengguna(G, name) != NULL;
+}
+
+void showMenu() {
+    cout << "=====================================\n";
+    cout << "              Menu Utama             \n";
+    cout << "=====================================\n";
+    cout << "1. Tambah Pengguna\n";
+    cout << "2. Tambah Hubungan\n";
+    cout << "3. Tampilkan Graf\n";
+    cout << "4. cari Pengguna Terpopuler\n";
+    cout << "5 Keluar\n";
+    cout << "=====================================\n";
+}
+
+void showAllUsers(graph G) {
+    adrPengguna curr = G.firstPengguna;
+    while (curr != NULL) {
+        cout << "Pengguna: " << curr->name << " (" << curr->age << " tahun, TTL: " << curr->birthDate << ")" << endl;
+        cout << "Teman:" << endl;
+
+        adrTeman Teman = curr->firstTeman;
+        while (Teman != NULL) {
+            cout << "- " << Teman->destPengguna->name << endl;
+            Teman = Teman->nextTeman;
         }
         cout << endl;
-        temp = temp->nextVertex;
+        curr = curr->nextPengguna;
     }
 }
 
-void cariTerpopuler(Graf G) {
-    Pengguna* temp = G.first;
-    string terpopuler;
-    int maxHubungan = 0;
+void showMostPopular(graph G) {
+    adrPengguna curr = G.firstPengguna;
+    adrPengguna mostPopular = NULL;
+    int maxFriends = -1;
 
-    while (temp != nullptr) {
-        int count = 0;
-        Teman* edge = temp->nextEdge;
-        while (edge != nullptr) {
-            count++;
-            edge = edge->nextEdge;
+    while (curr != NULL) {
+        int friendCount = 0;
+        adrTeman Teman = curr->firstTeman;
+        while (Teman != NULL) {
+            friendCount++;
+             Teman = Teman->nextTeman;
         }
-        if (count > maxHubungan) {
-            maxHubungan = count;
-            terpopuler = temp->info.nama;
+
+        if (friendCount > maxFriends) {
+            maxFriends = friendCount;
+            mostPopular = curr;
         }
-        temp = temp->nextVertex;
+        curr = curr->nextPengguna;
     }
 
-    cout << "Pengguna terpopuler: " << terpopuler << " dengan " << maxHubungan << " hubungan." << endl;
-}
-
-void cariTidakTerpopuler(Graf G) {
-    Pengguna* temp = G.first;
-    string tidakTerpopuler;
-    int minHubungan = INT_MAX;
-
-    while (temp != nullptr) {
-        int count = 0;
-        Teman* edge = temp->nextEdge;
-        while (edge != nullptr) {
-            count++;
-            edge = edge->nextEdge;
-        }
-        if (count < minHubungan) {
-            minHubungan = count;
-            tidakTerpopuler = temp->info.nama;
-        }
-        temp = temp->nextVertex;
+    if (mostPopular != NULL) {
+        cout << "Pengguna terpopuler adalah: " << mostPopular->name
+             << " dengan " << maxFriends << " teman." << endl;
     }
-
-    cout << "Pengguna tidak terpopuler: " << tidakTerpopuler << " dengan " << minHubungan << " hubungan." << endl;
 }
-
